@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>教育机构 AI 运营中台</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">AI</div>
+          <div>
+            <strong>教育运营中台</strong>
+            <span>人工确认优先</span>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="主导航">
+          <button class="nav-item active" data-view="dashboard">今日工作台</button>
+          <button class="nav-item" data-view="drafts">内容草稿</button>
+          <button class="nav-item" data-view="materials">素材搜索</button>
+          <button class="nav-item" data-view="messages">评论私信</button>
+          <button class="nav-item" data-view="leads">线索表</button>
+        </nav>
+
+        <div class="guardrail">
+          <strong>边界</strong>
+          <p>不自动登录、不批量发布、不自动发送私信；所有外发动作都必须人工确认。</p>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">小红书 + 微信 · 一期 MVP</p>
+            <h1 id="viewTitle">今日工作台</h1>
+          </div>
+          <div class="top-actions">
+            <button class="ghost-button" id="importMessagesButton">导入消息摘要</button>
+            <button class="primary-button" id="generateDraftButton">生成今日草稿</button>
+          </div>
+        </header>
+
+        <section class="view active" id="dashboard">
+          <div class="metric-grid" id="metrics"></div>
+
+          <div class="split-layout">
+            <section class="panel focus-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">优先级排序</p>
+                  <h2>今日最该跟进的 5 位客户</h2>
+                </div>
+                <span class="status-pill">高意向优先</span>
+              </div>
+              <div class="follow-list" id="followList"></div>
+            </section>
+
+            <section class="panel workflow-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">人工确认流程</p>
+                  <h2>运营闭环</h2>
+                </div>
+              </div>
+              <div class="workflow">
+                <div><span>1</span>AI 生成草稿 / 搜索素材</div>
+                <div><span>2</span>运营编辑审核</div>
+                <div><span>3</span>人工复制并确认发布</div>
+                <div><span>4</span>评论私信分级</div>
+                <div><span>5</span>高意向进入线索表</div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="drafts">
+          <div class="section-toolbar">
+            <div>
+              <p class="eyebrow">每天 3-5 条</p>
+              <h2>内容草稿中心</h2>
+            </div>
+            <div class="filter-tabs" role="tablist" aria-label="草稿状态筛选">
+              <button class="filter-tab active" data-draft-filter="all">全部</button>
+              <button class="filter-tab" data-draft-filter="review">待审核</button>
+              <button class="filter-tab" data-draft-filter="approved">待发布</button>
+              <button class="filter-tab" data-draft-filter="rejected">已驳回</button>
+            </div>
+          </div>
+          <div class="draft-grid" id="draftList"></div>
+        </section>
+
+        <section class="view" id="materials">
+          <div class="material-search">
+            <div>
+              <p class="eyebrow">公开素材参考</p>
+              <h2>素材搜索与二次创作</h2>
+            </div>
+            <form id="materialForm">
+              <input
+                id="materialQuery"
+                type="search"
+                value="找小学生写字课转化好的小红书笔记"
+                aria-label="素材搜索需求"
+              />
+              <button class="primary-button" type="submit">搜索参考</button>
+            </form>
+          </div>
+          <div class="material-results" id="materialResults"></div>
+        </section>
+
+        <section class="view" id="messages">
+          <div class="section-toolbar">
+            <div>
+              <p class="eyebrow">AI 整理评论与私信</p>
+              <h2>消息意向分级</h2>
+            </div>
+            <div class="filter-tabs" role="tablist" aria-label="消息意向筛选">
+              <button class="filter-tab active" data-message-filter="all">全部</button>
+              <button class="filter-tab" data-message-filter="high">高意向</button>
+              <button class="filter-tab" data-message-filter="medium">中意向</button>
+              <button class="filter-tab" data-message-filter="low">低意向</button>
+            </div>
+          </div>
+          <div class="message-list" id="messageList"></div>
+        </section>
+
+        <section class="view" id="leads">
+          <div class="section-toolbar">
+            <div>
+              <p class="eyebrow">高意向自动沉淀</p>
+              <h2>线索表</h2>
+            </div>
+            <button class="ghost-button" id="addLeadButton">新增线索</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>客户</th>
+                  <th>来源</th>
+                  <th>课程</th>
+                  <th>年级</th>
+                  <th>意向</th>
+                  <th>状态</th>
+                  <th>下次跟进</th>
+                  <th>负责人</th>
+                </tr>
+              </thead>
+              <tbody id="leadRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="confirmDialog">
+      <form method="dialog" class="dialog-body">
+        <p class="eyebrow">人工确认</p>
+        <h2 id="dialogTitle">确认动作</h2>
+        <p id="dialogText"></p>
+        <div class="dialog-actions">
+          <button class="ghost-button" value="cancel">取消</button>
+          <button class="primary-button" value="confirm">确认</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
